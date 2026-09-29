@@ -89,6 +89,39 @@ function App() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
+  const uploadFile = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setIsLoading(true);
+    try {
+      const res = await fetch('http://localhost:8000/api/upload', {
+        method: 'POST',
+        headers: {
+          'X-Filename': file.name,
+          'Content-Length': file.size.toString()
+        },
+        body: file
+      });
+      if (res.ok) {
+        alert('File uploaded successfully!');
+        fetchFiles(token);
+      } else {
+        alert('Upload failed.');
+      }
+    } catch(err) {
+      console.error(err);
+      alert('Upload error.');
+    } finally {
+      setIsLoading(false);
+      event.target.value = null; // reset input
+    }
+  }
+
+  const downloadFile = (filename) => {
+    window.open(`http://localhost:8000/api/download/${filename}`, '_blank');
+  }
+
   return (
     <div className="container">
       <h1>SocketVault</h1>
@@ -136,9 +169,17 @@ function App() {
             </div>
           </div>
           
-          <div className="notice">
-            <strong>Network Lab Demo:</strong> To upload or download files, run the C TCP Client in your terminal:<br/>
-            <code style={{background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px', marginTop: '6px', display: 'inline-block'}}>./client 127.0.0.1 U my_file.pdf</code>
+          <div className="notice" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div>
+              <strong>Web Upload:</strong> You can upload files directly via the browser now.<br/>
+              <span style={{fontSize: '0.85rem'}}>For raw TCP upload, use: <code>./client 127.0.0.1 U my_file.pdf</code></span>
+            </div>
+            <div>
+              <input type="file" id="file-upload" style={{display: 'none'}} onChange={uploadFile} />
+              <label htmlFor="file-upload" className="btn" style={{cursor: 'pointer', background: '#10b981'}}>
+                Upload File
+              </label>
+            </div>
           </div>
           
           <div className="table-wrapper">
@@ -157,7 +198,10 @@ function App() {
                     <td style={{fontWeight: 500}}>{f.filename}</td>
                     <td>{formatBytes(f.size)}</td>
                     <td><span className="badge">Verified TCP</span></td>
-                    <td style={{textAlign: 'right'}}>
+                    <td style={{textAlign: 'right', display: 'flex', gap: '8px', justifyContent: 'flex-end'}}>
+                      <button className="btn btn-secondary" style={{padding: '0.25rem 0.75rem', fontSize: '0.85rem'}} onClick={() => downloadFile(f.filename)}>
+                        Download
+                      </button>
                       <button className="btn btn-danger" onClick={() => deleteFile(f.id)}>
                         Delete
                       </button>
