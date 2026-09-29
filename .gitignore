@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Mac
+.DS_Store
+
+# C Compiled Binaries
+secure-file-transfer/c_backend/server
+secure-file-transfer/c_backend/client
+*.o
+*.out
+
+# Python (just in case)
+__pycache__/
+*.pyc
+.env
+.venv
+venv/
+
+# Storage / Temp files
+secure-file-transfer/storage/uploads/*
+secure-file-transfer/storage/temp/*
+!secure-file-transfer/storage/uploads/.gitkeep
+!secure-file-transfer/storage/temp/.gitkeep
+
+# Ignore large test files
+*.bin
+*.pdf
