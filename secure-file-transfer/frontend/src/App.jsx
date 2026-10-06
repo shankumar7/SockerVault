@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './index.css'
 
+const API_BASE_URL = `http://${window.location.hostname}:8000`
+
 function App() {
   const [files, setFiles] = useState([])
   const [username, setUsername] = useState('demo_user')
@@ -15,7 +17,7 @@ function App() {
     formData.append('password', password)
     
     try {
-      const res = await fetch('http://localhost:8000/api/auth/login', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         body: formData
       })
@@ -36,7 +38,7 @@ function App() {
   const register = async () => {
     setIsLoading(true)
     try {
-      const res = await fetch('http://localhost:8000/api/auth/register', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({username, password})
@@ -55,7 +57,7 @@ function App() {
 
   const fetchFiles = async (authToken) => {
     try {
-      const res = await fetch('http://localhost:8000/api/files', {
+      const res = await fetch(`${API_BASE_URL}/api/files`, {
         headers: {'Authorization': `Bearer ${authToken}`}
       })
       if(res.ok) {
@@ -69,7 +71,7 @@ function App() {
   
   const deleteFile = async (id) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/files/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/files/${id}`, {
         method: 'DELETE',
         headers: {'Authorization': `Bearer ${token}`}
       })
@@ -95,7 +97,7 @@ function App() {
 
     setIsLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/upload', {
+      const res = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         headers: {
           'X-Filename': file.name,
@@ -119,7 +121,7 @@ function App() {
   }
 
   const downloadFile = (filename) => {
-    window.open(`http://localhost:8000/api/download/${filename}`, '_blank');
+    window.open(`${API_BASE_URL}/api/download/${filename}`, '_blank');
   }
 
   return (
